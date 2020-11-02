@@ -26,19 +26,37 @@ function renderTrainer(trainerObj) {
     trainerCard.append(button)
     mainDiv.append(trainerCard)
 
+    renderPokemons(trainerCard, trainerObj.pokemons)
+
     //add the render pokemon as inner HTML
 }
 
-function renderPokemon() {
+function renderPokemons(trainerCard, pokemonArray) {
+    const pokemonContainer = document.createElement("ul")
+    trainerCard.append(pokemonContainer)
+    pokemonArray.forEach(pokemonObj => {
+        renderPokemon(pokemonContainer, pokemonObj)
+    })
+}
 
+function renderPokemon(pokemonContainer, pokemonObj) {
+    const pokemonLI = document.createElement("li")
+    pokemonLI.innerText = `${pokemonObj.nickname} (${pokemonObj.species})`
+    const releaseButton = document.createElement("button")
+    releaseButton.setAttribute("data-pokemon-id", pokemonObj.id)
+    releaseButton.innerText = "Release"
+    releaseButton.className = "release"
+    releaseButton.addEventListener("click", releasePokemon)
+    pokemonLI.append(releaseButton)
+    pokemonContainer.append(pokemonLI)
 }
 
 const addPokemon = event => {
 
 }
 
-// function addPokemon(event) {
-
-// }
+const releasePokemon = event => {
+    
+}
 
 init();
