@@ -52,11 +52,34 @@ function renderPokemon(pokemonContainer, pokemonObj) {
 }
 
 const addPokemon = event => {
+    const team = event.target.parentNode.querySelector("ul")
+
+    fetch(POKEMONS_URL, {
+
+        method: 'POST',
+        headers:{ 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+
+            "trainer_id": event.target.parentNode.dataset.id
+            // "trainer_id": event.target.parentNode.dataset[`data-trainer-id`]
+
+        }) 
+
+    })
+    .then(response => response.json())
+    // .then(data => console.log(data))
+    .then(data => renderPokemon(team, data))
+    // .then(console.log)
 
 }
 
 const releasePokemon = event => {
-    
+    const pokemonToRemove = event.target.parentNode
+
+    fetch(`${POKEMONS_URL}/${event.target.parentNode.dataset.id}`, { method: 'DELETE' })
+    .then(response => response.json())
+    .then(data => { pokemonToRemove.remove() })
+
 }
 
 init();
