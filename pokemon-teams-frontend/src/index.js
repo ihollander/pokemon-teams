@@ -20,7 +20,7 @@ function renderTrainer(trainerObj) {
     trainerCard.dataset.id = trainerObj.id
     trainerCard.innerText = trainerObj.name
     const button = document.createElement("button")
-    button.setAttribute("data-trainer-id", trainerObj.id)
+    button.dataset.trainerId = trainerObj.id
     button.innerText = "Add Pokemon"
     button.addEventListener("click", addPokemon)
     trainerCard.append(button)
@@ -43,7 +43,7 @@ function renderPokemon(pokemonContainer, pokemonObj) {
     const pokemonLI = document.createElement("li")
     pokemonLI.innerText = `${pokemonObj.nickname} (${pokemonObj.species})`
     const releaseButton = document.createElement("button")
-    releaseButton.setAttribute("data-pokemon-id", pokemonObj.id)
+    releaseButton.dataset.pokemonId = `${pokemonObj.id}`
     releaseButton.innerText = "Release"
     releaseButton.className = "release"
     releaseButton.addEventListener("click", releasePokemon)
@@ -52,34 +52,37 @@ function renderPokemon(pokemonContainer, pokemonObj) {
 }
 
 const addPokemon = event => {
-    const team = event.target.parentNode.querySelector("ul")
-
+    
     fetch(POKEMONS_URL, {
-
+        
         method: 'POST',
         headers:{ 'Content-Type': 'application/json' },
         body: JSON.stringify({
-
-            "trainer_id": event.target.parentNode.dataset.id
+            "trainer_id": event.target.dataset.trainerId
             // "trainer_id": event.target.parentNode.dataset[`data-trainer-id`]
-
         }) 
-
+        
     })
     .then(response => response.json())
     // .then(data => console.log(data))
-    .then(data => renderPokemon(team, data))
+    .then(data => {
+        if (data.error) {
+            console.log(data.error)
+        } else {
+        const team = event.target.parentNode.querySelector("ul")
+        renderPokemon(team, data)
+        }
+    })
     // .then(console.log)
 
 }
 
 const releasePokemon = event => {
-    const pokemonToRemove = event.target.parentNode
-
-    fetch(`${POKEMONS_URL}/${event.target.parentNode.dataset.id}`, { method: 'DELETE' })
-    .then(response => response.json())
-    .then(data => { pokemonToRemove.remove() })
-
+    
+    event.target.parentNode.remove()
+    fetch(`${POKEMONS_URL}/${event.target.dataset.pokemonId}`, { 
+        method: 'DELETE' 
+    })
 }
 
 init();
